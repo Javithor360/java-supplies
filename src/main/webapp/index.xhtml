@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Supplies Management</title>
+</h:head>
+<h:body>
+    <h:form>
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel for="name" value="Name:" />
+            <h:inputText id="name" value="#{suppliesBean.newSupply.name}" />
+            <h:outputLabel for="quantity" value="Quantity:" />
+            <h:inputText id="quantity" value="#{suppliesBean.newSupply.quantity}" />
+            <h:outputLabel for="price" value="Price:" />
+            <h:inputText id="price" value="#{suppliesBean.newSupply.price}" />
+            <h:commandButton value="Create Supply" action="#{suppliesBean.createSupply}" />
+        </h:panelGrid>
+
+        <p:dataTable value="#{suppliesBean.supplies}" var="supply" selectionMode="single" selection="#{suppliesBean.selectedSupply}">
+            <p:column headerText="ID">
+                <h:outputText value="#{supply.id}" />
+            </p:column>
+            <p:column headerText="Name">
+                <h:outputText value="#{supply.name}" />
+            </p:column>
+            <p:column headerText="Quantity">
+                <h:outputText value="#{supply.quantity}" />
+            </p:column>
+            <p:column headerText="Price">
+                <h:outputText value="#{supply.price}" />
+            </p:column>
+            <p:column>
+                <p:commandButton value="Delete" action="#{suppliesBean.deleteSupply}" update=":form"/>
+            </p:column>
+        </p:dataTable>
+    </h:form>
+</h:body>
+</html>

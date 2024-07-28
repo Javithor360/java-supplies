@@ -3,9 +3,9 @@ package com.dwf.insumos.ws.endpoints;
 import com.dwf.insumos.ws.model.Supplies;
 import com.dwf.insumos.ws.model.dao.SuppliesDAO;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
 
 // http://localhost:8080/insumos-1.0-SNAPSHOT/api/supplies/
