@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
     <title>Supplies Management</title>
 </h:head>
 <h:body>
-    <h:form>
+    <h:form id="form">
         <h:panelGrid columns="2" cellpadding="5">
             <h:outputLabel for="name" value="Name:" />
             <h:inputText id="name" value="#{suppliesBean.newSupply.name}" />
@@ -17,23 +16,30 @@
             <h:commandButton value="Create Supply" action="#{suppliesBean.createSupply}" />
         </h:panelGrid>
 
-        <p:dataTable value="#{suppliesBean.supplies}" var="supply" selectionMode="single" selection="#{suppliesBean.selectedSupply}">
-            <p:column headerText="ID">
+        <h:dataTable value="#{suppliesBean.supplies}" var="supply">
+            <h:column>
+                <f:facet name="header">ID</f:facet>
                 <h:outputText value="#{supply.id}" />
-            </p:column>
-            <p:column headerText="Name">
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
                 <h:outputText value="#{supply.name}" />
-            </p:column>
-            <p:column headerText="Quantity">
+            </h:column>
+            <h:column>
+                <f:facet name="header">Quantity</f:facet>
                 <h:outputText value="#{supply.quantity}" />
-            </p:column>
-            <p:column headerText="Price">
+            </h:column>
+            <h:column>
+                <f:facet name="header">Price</f:facet>
                 <h:outputText value="#{supply.price}" />
-            </p:column>
-            <p:column>
-                <p:commandButton value="Delete" action="#{suppliesBean.deleteSupply}" update=":form"/>
-            </p:column>
-        </p:dataTable>
+            </h:column>
+            <h:column>
+                <h:commandButton value="Delete" action="#{suppliesBean.deleteSupply}">
+                    <f:ajax render="form" />
+                </h:commandButton>
+
+            </h:column>
+        </h:dataTable>
     </h:form>
 </h:body>
 </html>

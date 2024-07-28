@@ -4,8 +4,8 @@ import com.dwf.insumos.sf.model.Supplies;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.bean.ManagedBean;
-
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,7 +13,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
-@ManagedBean(name = "suppliesBean")
+@Named
+@RequestScoped
 public class SuppliesBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,7 +50,9 @@ public class SuppliesBean implements Serializable {
     public void createSupply() {
         try {
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL)).POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(newSupply))).header("Content-Type", "application/json").build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL))
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(newSupply)))
+                    .header("Content-Type", "application/json").build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -68,14 +71,16 @@ public class SuppliesBean implements Serializable {
         if (selectedSupply != null) {
             try {
                 HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/delete/" + selectedSupply.getId())).POST(HttpRequest.BodyPublishers.noBody()).build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "/delete/" + selectedSupply.getId()))
+                        .POST(HttpRequest.BodyPublishers.noBody()).build();
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
                     fetchSupplies();
                 } else {
-                    System.out.println("DELETE request not worked, Status code: " + response.statusCode());
+                    System.out.println("DELETE request didn't work. Status code: " + response.statusCode());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
