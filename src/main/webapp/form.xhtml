@@ -10,10 +10,14 @@
 <h:head>
     <title>Supply Form</title>
 </h:head>
+
+<!-- Dynamic form that adapts depending if an insertion or updated is requested -->
+
 <h:body class="container mt-5">
     <h1 class="mb-4">#{suppliesBean.isEditing ? 'Edit Supply' : 'Create Supply'}</h1>
     <hr />
     <h:form id="supplyForm">
+        <!-- Use panelGroup to decide if ID field will render or not -->
         <h:panelGroup rendered="#{suppliesBean.isEditing}">
             <div class="mb-3">
                 <h:outputLabel for="id" value="ID:" />
@@ -23,6 +27,7 @@
         <div class="mb-3">
             <h:outputLabel for="name" value="Name:" />
             <h:inputText id="name" value="#{suppliesBean.supply.name}" required="true" class="form-control"/>
+            <!-- message tag to render possible errors -->
             <h:message for="name" class="text-danger"/>
         </div>
         <div class="mb-3">

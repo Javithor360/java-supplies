@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html">
 <h:head>
     <title>API Documentation</title>
+    <!-- webjars lets us import properly the required external resources -->
     <h:outputStylesheet library="webjars" name="bootstrap/5.1.3/css/bootstrap.min.css"/>
     <style>
         .json-pre {
@@ -15,19 +16,45 @@
         }
     </style>
 </h:head>
+
+<!-- Since Swagger didn't work during installation the API documentation is handled manually -->
+
 <h:body>
     <div class="container mt-4">
         <h1>API Documentation</h1>
+        <hr  />
         <div class="accordion" id="apiAccordion">
+            <!-- GET: Test endpoint -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingZero">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
+                        GET /api/welcome - Receive a chill greeting
+                    </button>
+                </h2>
+                <div id="collapseZero" class="accordion-collapse collapse show" aria-labelledby="headingZero"
+                     data-bs-parent="#apiAccordion">
+                    <div class="accordion-body">
+                        <strong>URL:</strong> /api/wecome<br/>
+                        <strong>Method:</strong> GET<br/>
+                        <strong>Description:</strong> Just to make sure the service is running properly.<br/>
+                        <strong>Responses:</strong>
+                        <ul>
+                            <li>200 OK - Successfully connected to web service.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- GET: All supplies endpoint -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         GET /api/supplies - Retrieve all supplies
                     </button>
                 </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                      data-bs-parent="#apiAccordion">
                     <div class="accordion-body">
                         <strong>URL:</strong> /api/supplies<br/>
@@ -146,7 +173,7 @@
                 <h2 class="accordion-header" id="headingFive">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
-                        DELETE /api/supplies/{id} - Retrieve a single supply
+                        DELETE /api/supplies/{id} - Delete a supply
                     </button>
                 </h2>
                 <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
@@ -170,6 +197,11 @@
             </div>
 
         </div>
+        <hr  />
+        <h:form>
+            <h:commandButton value="Got it!" action="index?faces-redirect=true"
+                             class="btn btn-secondary mt-4"/>
+        </h:form>
     </div>
 
     <h:outputScript library="webjars" name="bootstrap/5.1.3/js/bootstrap.bundle.min.js"/>

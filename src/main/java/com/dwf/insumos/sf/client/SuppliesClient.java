@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class SuppliesClient {
 
     private static final String BASE_URI = "http://localhost:8080/insumos-1.0-SNAPSHOT/api/supplies";
-    private HttpClient client = HttpClient.newHttpClient();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ArrayList<Supplies> getAllSupplies() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URI)).header("Accept", "application/json").GET().build();
