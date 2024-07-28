@@ -1,94 +1,36 @@
 package com.dwf.insumos.sf.mbeans;
 
+import com.dwf.insumos.sf.client.SuppliesClient;
 import com.dwf.insumos.sf.model.Supplies;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
+
+import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
+import java.util.List;
 
 @Named
 @RequestScoped
 public class SuppliesBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final String BASE_URL = "http://localhost:8080/insumos-1.0-SNAPSHOT/api/supplies";
-
-    private ArrayList<Supplies> supplies;
+    private SuppliesClient suppliesClient = new SuppliesClient();
+    private List<Supplies> supplies;
     private Supplies newSupply = new Supplies();
-    private Supplies selectedSupply;
+    private String message;
 
     @PostConstruct
     public void init() {
-        fetchSupplies();
-    }
-
-    public void fetchSupplies() {
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL)).GET().build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                supplies = objectMapper.readValue(response.body(), new TypeReference<ArrayList<Supplies>>() {});
-            } else {
-                System.out.println("GET request didn't work. Status code: " + response.statusCode());
-            }
-
-        } catch (Exception e) {
+            supplies = suppliesClient.getAllSupplies();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void createSupply() {
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL))
-                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(newSupply)))
-                    .header("Content-Type", "application/json").build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 201) {
-                fetchSupplies();
-                newSupply = new Supplies(); // Reset the newSupply object after creation
-            } else {
-                System.out.println("POST request didn't work. Status code: " + response.statusCode());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteSupply() {
-        if (selectedSupply != null) {
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(BASE_URL + "/delete/" + selectedSupply.getId()))
-                        .POST(HttpRequest.BodyPublishers.noBody()).build();
-
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                if (response.statusCode() == 200) {
-                    fetchSupplies();
-                } else {
-                    System.out.println("DELETE request didn't work. Status code: " + response.statusCode());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public ArrayList<Supplies> getSupplies() {
+    public List<Supplies> getSupplies() {
         return supplies;
     }
 
@@ -100,11 +42,45 @@ public class SuppliesBean implements Serializable {
         this.newSupply = newSupply;
     }
 
-    public Supplies getSelectedSupply() {
-        return selectedSupply;
+    public String getMessage() {
+        return message;
     }
 
-    public void setSelectedSupply(Supplies selectedSupply) {
-        this.selectedSupply = selectedSupply;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String createSupply() {
+        try {
+            // Validations
+            if (newSupply.getName() == null || newSupply.getName().isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Name cannot be empty", null));
+                return null;
+            }
+            if (newSupply.getQuantity() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Quantity must be a positive integer", null));
+                return null;
+            }
+            if (newSupply.getPrice() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Price must be a positive number", null));
+                return null;
+            }
+
+            // If no validation errors, create the supply
+            suppliesClient.createSupply(newSupply);
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("successMessage", "Supply created successfully!");
+            return goBack();
+        } catch (IOException | InterruptedException e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error creating supply: " + e.getMessage(), null));
+            return null;
+        }
+    }
+
+    public String goToCreateForm() {
+        return "createSupply?faces-redirect=true";
+    }
+
+    public String goBack() {
+        return "index?faces-redirect=true";
     }
 }
