@@ -3,9 +3,9 @@ package com.dwf.insumos.ws.endpoints;
 import com.dwf.insumos.ws.model.Supplies;
 import com.dwf.insumos.ws.model.dao.SuppliesDAO;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
 
 // http://localhost:8080/insumos-1.0-SNAPSHOT/api/supplies/
@@ -38,23 +38,20 @@ public class SuppliesRest {
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createSupply(@FormParam("name") String name, @FormParam("quantity") int quantity, @FormParam("price") float price) throws SQLException {
-        Supplies supply = new Supplies();
-
+    @Consumes(MediaType.APPLICATION_JSON) // What the service is expecting
+    @Produces(MediaType.APPLICATION_JSON) // What the service is returning
+    public Response createSupply(Supplies supply) throws SQLException {
         // Some kind of validation should be here if needed
-
-        supply.setName(name);
-        supply.setQuantity(quantity);
-        supply.setPrice(price);
         suppliesDAO.insert(supply);
 
         return Response.status(201).header("Access-Control-Allow-Origin", "*").entity(supply).build();
     }
 
-    @POST // @DELETE is the correct annotation but doesn't work properly with HTML forms
+    //@POST // @DELETE is the correct annotation but doesn't work properly with HTML forms
+    @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("delete/{id}")
+    @Path("{id}")
+    // @Path("delete/{id}")
     public Response deleteSupply(@PathParam("id") int id) throws SQLException {
         Supplies supply = suppliesDAO.findById(id);
 
@@ -68,18 +65,19 @@ public class SuppliesRest {
     }
 
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response updateSupply(@PathParam("id") int id, @FormParam("name") String name, @FormParam("quantity") int quatity, @FormParam("price") float price) throws SQLException {
+    public Response updateSupply(@PathParam("id") int id, Supplies updatedSupply) throws SQLException {
         Supplies supply = suppliesDAO.findById(id);
 
         if (supply == null || supply.getId() == 0) {
             return Response.status(404).header("Access-Control-Allow-Origin", "*").entity("Supply not found").build();
         }
 
-        supply.setName(name);
-        supply.setQuantity(quatity);
-        supply.setPrice(price);
+        supply.setName(updatedSupply.getName());
+        supply.setQuantity(updatedSupply.getQuantity());
+        supply.setPrice(updatedSupply.getPrice());
         suppliesDAO.update(supply);
 
         return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(supply).build();

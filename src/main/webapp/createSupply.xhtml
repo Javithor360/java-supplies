@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+
+<head>
+    <title>Create Supply</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<h:head>
+    <title>Create Supply</title>
+</h:head>
+<h:body class="container mt-5">
+    <h1 class="mb-4">Create Supply</h1>
+    <h:form id="createForm">
+        <div class="mb-3">
+            <h:outputLabel for="name" value="Name:" />
+            <h:inputText id="name" value="#{suppliesBean.newSupply.name}" required="true" class="form-control"/>
+            <h:message for="name" class="text-danger"/>
+        </div>
+        <div class="mb-3">
+            <h:outputLabel for="quantity" value="Quantity:" />
+            <h:inputText id="quantity" value="#{suppliesBean.newSupply.quantity}" required="true" class="form-control">
+                <f:validateLongRange minimum="1"/>
+            </h:inputText>
+            <h:message for="quantity" class="text-danger"/>
+        </div>
+        <div class="mb-3">
+            <h:outputLabel for="price" value="Price:" />
+            <h:inputText id="price" value="#{suppliesBean.newSupply.price}" required="true" class="form-control">
+                <f:validateDoubleRange minimum="0.01"/>
+            </h:inputText>
+            <h:message for="price" class="text-danger"/>
+        </div>
+        <h:commandButton value="Create" action="#{suppliesBean.createSupply}" class="btn btn-primary"/>
+        <h:commandLink value="Back" action="#{suppliesBean.goBack}" styleClass="btn btn-secondary ms-2" immediate="true"/>
+    </h:form>
+</h:body>
+</body>
+</html>
